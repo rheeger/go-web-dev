@@ -6,15 +6,15 @@
 </head>
 <body>
 
-<h1>Hello from index. You've posted the following photos:</h1>
+<h1>Your Pictures:</h1>
 {{range .}}
 <img src="/public/pics/{{.}}" width="400px">
 {{end}}
 
-    <form method="post" enctype="multipart/form-data">
-        <input type="file" name="newfile"><br>
-        <input type="submit"><br>
-    </form>
+<form method="post" enctype="multipart/form-data">
+    <input type="file" name="nf">
+    <input type="submit">
+</form>
 
 </body>
 </html>
