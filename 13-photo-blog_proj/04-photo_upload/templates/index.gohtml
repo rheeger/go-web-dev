@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>INDEX</title>
+</head>
+<body>
+
+<h1>Hello from index. You've posted the following photos:</h1>
+
+{{range .}}
+<h2>{{.}}</h2>
+{{end}}
+
+    <form method="post" enctype="multipart/form-data">
+        <input type="file" name="newfile"><br>
+        <input type="submit"><br>
+    </form>
+
+</body>
+</html>
