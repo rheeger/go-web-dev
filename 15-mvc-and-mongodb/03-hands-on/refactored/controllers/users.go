@@ -5,8 +5,33 @@ import (
 	"time"
 
 	"github.com/rheeger/go-web-dev/15-mvc-and-mongodb/03-hands-on/refactored/models"
+	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
 )
+
+func GetUser(w http.ResponseWriter, req *http.Request) models.User {
+	// get cookie
+	c, err := req.Cookie("session")
+	if err != nil {
+		sID, _ := uuid.NewV4()
+		c = &http.Cookie{
+			Name:  "session",
+			Value: sID.String(),
+		}
+
+	}
+	c.MaxAge = models.SessionLength
+	http.SetCookie(w, c)
+
+	// if the User exists already, get User
+	var u models.User
+	if s, ok := models.DbSessions[c.Value]; ok {
+		s.LastActivity = time.Now()
+		models.DbSessions[c.Value] = s
+		u = models.DbUsers[s.Un]
+	}
+	return u
+}
 
 func CreateUser(w http.ResponseWriter, req *http.Request) {
 	var u models.User
@@ -67,8 +92,8 @@ func Login(w http.ResponseWriter, req *http.Request) {
 		http.Redirect(w, req, "/", http.StatusSeeOther)
 		return
 	}
-	showSessions() // for demonstration purposes
-	tpl.ExecuteTemplate(w, "login.gohtml", u)
+	ShowSessions() // for demonstration purposes
+	models.Tpl.ExecuteTemplate(w, "login.gohtml", u)
 }
 
 func AlreadyLoggedIn(w http.ResponseWriter, req *http.Request) bool {
@@ -78,12 +103,12 @@ func AlreadyLoggedIn(w http.ResponseWriter, req *http.Request) bool {
 	}
 	s, ok := models.DbSessions[c.Value]
 	if ok {
-		s.lastActivity = time.Now()
+		s.LastActivity = time.Now()
 		models.DbSessions[c.Value] = s
 	}
-	_, ok = models.DbUsers[s.un]
+	_, ok = models.DbUsers[s.Un]
 	// refresh session
-	c.MaxAge = sessionLength
+	c.MaxAge = models.SessionLength
 	http.SetCookie(w, c)
 	return ok
 }
