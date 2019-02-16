@@ -58,7 +58,6 @@ func CreateUser(w http.ResponseWriter, req *http.Request) models.User {
 	u = models.User{un, bs, f, l, r}
 	models.DbUsers[un] = u
 	// redirect
-	http.Redirect(w, req, "/", http.StatusSeeOther)
 	return u
 }
 
