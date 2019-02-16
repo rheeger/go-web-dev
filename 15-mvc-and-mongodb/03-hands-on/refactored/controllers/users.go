@@ -33,36 +33,33 @@ func GetUser(w http.ResponseWriter, req *http.Request) models.User {
 	return u
 }
 
-func CreateUser(w http.ResponseWriter, req *http.Request) {
+func CreateUser(w http.ResponseWriter, req *http.Request) models.User {
 	var u models.User
 	// process form submission
-	if req.Method == http.MethodPost {
-		// get form values
-		un := req.FormValue("username")
-		p := req.FormValue("password")
-		f := req.FormValue("firstname")
-		l := req.FormValue("lastname")
-		r := req.FormValue("role")
-		// username taken?
-		if _, ok := models.DbUsers[un]; ok {
-			http.Error(w, "Username already taken", http.StatusForbidden)
-			return
-		}
+	// get form values
+	un := req.FormValue("username")
+	p := req.FormValue("password")
+	f := req.FormValue("firstname")
+	l := req.FormValue("lastname")
+	r := req.FormValue("role")
+	// username taken?
+	if _, ok := models.DbUsers[un]; ok {
+		http.Error(w, "Username already taken", http.StatusForbidden)
 
-		//create session
-		CreateSession(w, req)
-		// store user in dbUsers
-		bs, err := bcrypt.GenerateFromPassword([]byte(p), bcrypt.MinCost)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-			return
-		}
-		u = models.User{un, bs, f, l, r}
-		models.DbUsers[un] = u
-		// redirect
-		http.Redirect(w, req, "/", http.StatusSeeOther)
-		return
 	}
+
+	//create session
+	CreateSession(w, req)
+	// store user in dbUsers
+	bs, err := bcrypt.GenerateFromPassword([]byte(p), bcrypt.MinCost)
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+	}
+	u = models.User{un, bs, f, l, r}
+	models.DbUsers[un] = u
+	// redirect
+	http.Redirect(w, req, "/", http.StatusSeeOther)
+	return u
 }
 
 func Login(w http.ResponseWriter, req *http.Request) {
