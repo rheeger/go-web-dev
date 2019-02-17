@@ -1,0 +1,8 @@
+CREATE TABLE myemployees (
+   ID SERIAL PRIMARY KEY     NOT NULL,
+   NAME           TEXT    NOT NULL,
+   RANK           INT     DEFAULT 10,
+   SALARY         REAL DEFAULT 25500.00
+);
+
+INSERT INTO myemployees (NAME, RANK, SALARY) VALUES ('Daniel', '23', '55000'), ('Arin', '25', '65000'), ('James', '32', '35000'), ('Juan', '24', '72000'), ('Shen', '26', '64000'), ('Myke', '27', '58000'), ('McLeod', '26', '72000');
